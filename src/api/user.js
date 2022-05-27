@@ -1,24 +1,21 @@
+// request=>axiso 导入
 import request from '@/utils/request'
 
 export function login(data) {
   return request({
-    url: '/vue-admin-template/user/login',
     method: 'post',
+    url: '/sys/login',
     data
   })
 }
 
-export function getInfo(token) {
+export function getUserInfo() {
   return request({
-    url: '/vue-admin-template/user/info',
-    method: 'get',
-    params: { token }
+    method: 'post',
+    url: '/sys/profile'
   })
 }
 
 export function logout() {
-  return request({
-    url: '/vue-admin-template/user/logout',
-    method: 'post'
-  })
+
 }

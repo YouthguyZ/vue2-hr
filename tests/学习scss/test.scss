@@ -1,0 +1,23 @@
+// 模块化 导入
+@import './base.scss';
+//变量
+$basic-color:green;
+$basic-width:300px;
+//嵌套
+//&父子选择器
+#app{
+  border: 6px solid green;
+  .box{
+    width: $basic-width;
+    height: $base-height;
+    background-color:$basic-color;
+    margin:0 auto ;
+    a{
+      color: pink;
+      text-decoration: none;
+      &:hover{
+        color: red;
+      }
+    }
+  }
+}
