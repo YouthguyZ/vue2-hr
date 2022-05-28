@@ -30,8 +30,10 @@ service.interceptors.response.use(function(response) {
   // 对响应数据做点什么
   console.log('响应成功', response)
   if (!response.data.success) {
+    // promise失败对象 手动抛出异常
     return Promise.reject(response.data)
   }
+  // 数据脱壳 后面ajax使用res时不用再结构
   return response.data
 }, function(error) {
   // 对响应错误做点什么

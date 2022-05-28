@@ -137,10 +137,11 @@ export default {
         // this.$store.commit('user/updateToken', res.data)
 
         // 使用actions 将数据传给mutations
+        // 直接使用res 不用结构是因为响应拦截器里使用了数据脱壳
         const res = await this.$store.dispatch('user/userLogin', this.loginForm)
         this.$message.success(res.message)
       } catch (e) {
-        console.log(e.message)
+        console.log('登陆失败的结果：', e.message)
         // 提示用户失败
         this.$message.error(e.message)
       }
