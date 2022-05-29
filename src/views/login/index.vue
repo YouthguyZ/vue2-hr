@@ -44,7 +44,6 @@
       </el-form-item>
 
       <el-button class="loginBtn" :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="hLogin">登录</el-button>
-      <el-button class="loginBtn" :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="hgetUserInfo">测试用户信息</el-button>
 
       <div class="tips">
         <span style="margin-right:20px;">账号: 13800000002</span>
@@ -57,7 +56,7 @@
 
 <script>
 // 导入login API
-import { getUserInfo } from '@/api/user'
+// import { getUserInfo } from '@/api/user'
 // 导入封装好的正则校验
 import { validMobile } from '@/utils/validate'
 
@@ -140,16 +139,18 @@ export default {
         // 直接使用res 不用结构是因为响应拦截器里使用了数据脱壳
         const res = await this.$store.dispatch('user/userLogin', this.loginForm)
         this.$message.success(res.message)
+        // 跳转页面到主页 携带参数登录会直接跳转到退出时的页面
+        this.$router.push(this.$route.query.return_url || '/')
       } catch (e) {
         console.log('登陆失败的结果：', e.message)
         // 提示用户失败
         this.$message.error(e.message)
       }
-    },
-    async hgetUserInfo() {
-      const res = await getUserInfo()
-      console.log('获取用户信息', res)
     }
+    // async hgetUserInfo() {
+    //   const res = await getUserInfo()
+    //   console.log('获取用户信息', res)
+    // }
   }
 }
 </script>

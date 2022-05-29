@@ -28,7 +28,7 @@ service.interceptors.request.use(function(config) {
 // 添加响应拦截器
 service.interceptors.response.use(function(response) {
   // 对响应数据做点什么
-  console.log('响应成功', response)
+  // console.log('响应成功', response)
   if (!response.data.success) {
     // promise失败对象 手动抛出异常
     return Promise.reject(response.data)

@@ -2,28 +2,31 @@
   <div class="navbar">
     <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
-    <breadcrumb class="breadcrumb-container" />
+    <div class="app-breadcrumb">
+      江苏传智播客教育科技股份有限公司
+      <span class="breadBtn">深情版</span>
+    </div>
 
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
+          <img src="staffPhoto" class="user-avatar">
+          <!-- <span>{{ $store.state.user.userInfo.username }}</span> -->
+          <span>{{ username }}</span>
+
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
             <el-dropdown-item>
-              Home
+              主页
             </el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
+          <a target="_blank" href="https://github.com/YouthguyZ/vue2-hr">
             <el-dropdown-item>Github</el-dropdown-item>
           </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
-            <el-dropdown-item>Docs</el-dropdown-item>
-          </a>
           <el-dropdown-item divided @click.native="logout">
-            <span style="display:block;">Log Out</span>
+            <span style="display:block;">退出登录</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -33,27 +36,54 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import Breadcrumb from '@/components/Breadcrumb'
+// import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 
 export default {
   components: {
-    Breadcrumb,
+    // Breadcrumb,
     Hamburger
   },
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar'
+      'avatar',
+      'staffPhoto',
+      'username'
     ])
+    // ...mapState('user', ['userInfo'])
   },
   methods: {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
+    // 退出登录
     async logout() {
-      await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      // 提示用户是否确认退出
+      this.$confirm('确定要退出登录吗？？', '提示', { type: 'warning' })
+        .then(() => {
+          // // 清空token
+          // this.$store.commit('user/removeToken')
+          // // 清空uesrinfo
+          // this.$store.commit('user/removeUserInfo')
+          // 用actions方法
+          this.$store.dispatch('user/logout')
+          // 跳转到登录页
+          // this.$router.push('/login')
+          // 跳转路由-回登陆
+          // 如何获取当前页面的地址 : this.$route.fullPath
+          // this.$route.path只有路径的信息
+          // this.$route.fullPath：路径+查询参数的信息
+          // this.$router.push('/login?return_url=' + encodeURIComponent(this.$route.fullPath))
+          this.$router.push({
+            path: '/login',
+            query: {
+              return_url: this.$route.fullPath
+            }
+          })
+          // console.log('已退出')
+        })
+        .catch(() => {})
     }
   }
 }
@@ -64,7 +94,7 @@ export default {
   height: 50px;
   overflow: hidden;
   position: relative;
-  background: #fff;
+  background-image: -webkit-linear-gradient(left, #3d6df8, #5b8cff);
   box-shadow: 0 1px 4px rgba(0,21,41,.08);
 
   .hamburger-container {
@@ -79,7 +109,24 @@ export default {
       background: rgba(0, 0, 0, .025)
     }
   }
-
+  .app-breadcrumb {
+    display: inline-block;
+    font-size: 18px;
+    line-height: 50px;
+    margin-left: 10px;
+    color: #ffffff;
+    cursor: text;
+    .breadBtn {
+      background: #84a9fe;
+      font-size: 14px;
+      padding: 0 10px;
+      display: inline-block;
+      height: 30px;
+      line-height: 30px;
+      border-radius: 10px;
+      margin-left: 15px;
+    }
+  }
   .breadcrumb-container {
     float: left;
   }
@@ -115,14 +162,15 @@ export default {
       margin-right: 30px;
 
       .avatar-wrapper {
-        margin-top: 5px;
+        // margin-top: 5px;
         position: relative;
 
         .user-avatar {
           cursor: pointer;
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
+          width: 30px;
+          height: 30px;
+          border-radius: 15px;
+          vertical-align: middle;
         }
 
         .el-icon-caret-bottom {
