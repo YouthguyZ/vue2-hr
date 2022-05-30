@@ -13,8 +13,11 @@ router.beforeEach(async(to, from, next) => {
   const token = store.state.user.token
   if (token) {
     // 已登录
-    // 调用actions 获取用户信息加await 获取结果后再跳转
-    await store.dispatch('user/getProfile')
+    // 优化ajax请求发送 如果有userinfo信息 就不需要发请求获取个人信息
+    if (!store.state.user.userInfo.userId) {
+      // 调用actions 获取用户信息加await 获取结果后再跳转
+      await store.dispatch('user/getProfile')
+    }
     // 开始进度条
     NProgress.start()
     if (to.path === '/login') {
