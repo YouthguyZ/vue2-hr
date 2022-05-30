@@ -3,6 +3,7 @@ import store from '@/store'
 // 导入进度条
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
+import getPageTitle from './utils/get-page-title'
 
 // 创建白名单 白名单：未登录也可以去访问的网页
 const whiteList = ['/login', '/404']
@@ -40,10 +41,20 @@ router.beforeEach(async(to, from, next) => {
   }
   // next()
 })
-// 后置路由器
-router.afterEach(() => {
+
+// 可以写多个前置守卫 写不同的功能 隔离开
+router.beforeEach((to, from, next) => {
+  // 动态设置标题切换
+  document.title = getPageTitle(to.meta.title)
+  next()
+})
+
+// 后置路由守卫
+router.afterEach((to, from) => {
   // 结束进度条
   NProgress.done()
+  // // 动态设置标题
+  // document.title = getPageTitle(to.meta.title)
 })
 
 // import router from './router'

@@ -34,14 +34,14 @@ import social_securitys from './modules/social_securitys'
   }
  */
 export const asyncRoutes = [
-  // 放动态组件 将来放8个
+  // 放动态组件 将来放8个组件
   departments,
+  employees,
+  settings,
+  permissions,
   approvals,
   attendances,
-  employees,
-  permissions,
   salarys,
-  settings,
   social_securitys
 ]
 /**
@@ -70,7 +70,7 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: '主页', icon: 'dashboard' }
+      meta: { title: '首页', icon: 'dashboard' }
     }]
   },
   // 404 page must be placed at the end !!!
