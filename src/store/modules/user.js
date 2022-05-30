@@ -27,7 +27,7 @@ export default {
     },
     // 清楚用户信息
     removeUserInfo(state) {
-      state.UserInfo = ''
+      state.UserInfo = {}
     }
 
   },

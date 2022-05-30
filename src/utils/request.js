@@ -1,6 +1,8 @@
 import axios from 'axios'
 // 导入store
 import store from '@/store'
+// 导入router
+import router from '@/router'
 
 // create an axios instance
 const service = axios.create({
@@ -36,7 +38,23 @@ service.interceptors.response.use(function(response) {
   // 数据脱壳 后面ajax使用res时不用再结构
   return response.data
 }, function(error) {
+  console.dir(error)
   // 对响应错误做点什么
+  if (error.response.data.code === 10002) {
+    // 退出登录
+    store.dispatch('user/logout')
+    // console.log(location.hash)=> #/form/index
+    // 页面跳转
+    router.push({
+      path: '/login',
+      query: {
+        // this.$route.fullPath  =>  router.currentRoute.fullPath
+        // console.log(router.currentRoute.fullPath)
+        // console.log(location.hash)
+        return_url: location.hash.substring(1)
+      }
+    })
+  }
   return Promise.reject(error)
 })
 
