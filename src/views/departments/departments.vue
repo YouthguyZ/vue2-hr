@@ -51,7 +51,8 @@
                         操作<i class="el-icon-arrow-down" />
                       </span>
                       <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item @click.native="hAddShow">添加子部门</el-dropdown-item>
+                        <el-dropdown-item @click.native="hAddShow(data)">添加子部门</el-dropdown-item>
+                        <el-dropdown-item @click.native="hEditShow(data)">编辑部门</el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
                   </el-col>
@@ -63,13 +64,22 @@
       </el-card>
     </div>
     <el-dialog
-      title="添加或修改"
+      title="添加子部门"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       :visible.sync="showVisible"
       width="55%"
     >
-      <add-or-edit />
+      <add-or-edit v-if="showVisible" :id="curId" :is-edit="isEdit" @success="hSuccess" />
+    </el-dialog>
+    <el-dialog
+      title="编辑部门"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="showVisibleEdit"
+      width="55%"
+    >
+      <add-or-edit v-if="showVisibleEdit" :id="curId" :is-edit="isEdit" @edit="hEdit" />
     </el-dialog>
   </div>
 </template>
@@ -100,7 +110,10 @@ export default {
       //   ]
       // }]
       list: [],
-      showVisible: false
+      showVisible: false,
+      curId: '',
+      isEdit: false,
+      showVisibleEdit: false
     }
   },
   created() {
@@ -108,15 +121,37 @@ export default {
   },
   methods: {
     async loadDepartmentsList() {
-      const res = await getDepartmentsList()
-      // console.log(res.data.depts)
-      res.data.depts.shift()
-      // this.list = res.data.depts
-      // 用工具函数 扁平数组转换为树状数组
-      this.list = tranListToTreeData(res.data.depts)
+      try {
+        const res = await getDepartmentsList()
+        // console.log(res.data.depts)
+        res.data.depts.shift()
+        // this.list = res.data.depts
+        // 用工具函数 扁平数组转换为树状数组
+        this.list = tranListToTreeData(res.data.depts)
+      } catch (e) {
+        console.log(e)
+      }
     },
-    hAddShow() {
+    hAddShow(data) {
       this.showVisible = true
+      this.curId = data.id
+      this.isEdit = false
+    },
+    // 子向父传值 自定义方法
+    hSuccess() {
+      // 关闭dialog
+      this.showVisible = false
+      // 更新数据
+      this.loadDepartmentsList()
+    },
+    hEdit() {
+      this.showVisibleEdit = false
+      this.loadDepartmentsList()
+    },
+    hEditShow(data) {
+      this.showVisibleEdit = true
+      this.curId = data.id
+      this.isEdit = true
     }
   }
 }
