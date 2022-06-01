@@ -18,7 +18,7 @@
                     操作<i class="el-icon-arrow-down" />
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item>添加子部门</el-dropdown-item>
+                    <el-dropdown-item @click.native="hAddShow">添加子部门</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-col>
@@ -51,7 +51,7 @@
                         操作<i class="el-icon-arrow-down" />
                       </span>
                       <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item>添加子部门</el-dropdown-item>
+                        <el-dropdown-item @click.native="hAddShow">添加子部门</el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
                   </el-col>
@@ -62,27 +62,61 @@
         </el-tree>
       </el-card>
     </div>
+    <el-dialog
+      title="添加或修改"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="showVisible"
+      width="55%"
+    >
+      <add-or-edit />
+    </el-dialog>
   </div>
 </template>
 <script>
+import { getDepartmentsList } from '@/api/departments'
+import { tranListToTreeData } from '@/utils'
+// 导入子组件 装表单内容
+import addOrEdit from '@/views/departments/deptdialog.vue'
 export default {
+  components: {
+    addOrEdit
+  },
   data() {
     return {
       // 依赖一份树形数据
-      list: [{
-        name: '财务部',
-        manager: '刘备',
-        children: [
-          {
-            name: '财务核算部',
-            manager: '张飞'
-          },
-          {
-            name: '税务核算部',
-            manager: '关羽'
-          }
-        ]
-      }]
+      // list: [{
+      //   name: '财务部',
+      //   manager: '刘备',
+      //   children: [
+      //     {
+      //       name: '财务核算部',
+      //       manager: '张飞'
+      //     },
+      //     {
+      //       name: '税务核算部',
+      //       manager: '关羽'
+      //     }
+      //   ]
+      // }]
+      list: [],
+      showVisible: false
+    }
+  },
+  created() {
+    this.loadDepartmentsList()
+  },
+  methods: {
+    async loadDepartmentsList() {
+      const res = await getDepartmentsList()
+      // console.log(res.data.depts)
+      res.data.depts.shift()
+      // this.list = res.data.depts
+      // 用工具函数 扁平数组转换为树状数组
+      this.list = tranListToTreeData(res.data.depts)
+    },
+    hAddShow() {
+      this.showVisible = true
     }
   }
 }
