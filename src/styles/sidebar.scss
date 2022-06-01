@@ -68,6 +68,12 @@
       height: 100%;
       width: 100% !important;
       a{
+        &.router-link-active{
+          background-color: #fff;
+          .svg-icon,span{
+           color: $menuActiveText
+          }
+        }
         li{
           .svg-icon{
             color: #fff;
@@ -82,10 +88,10 @@
           }
           &:hover{
             .svg-icon{
-              color: #43a7fe
+              color: $menuActiveText
             }
             span{
-              color: #43a7fe;
+              color: $menuActiveText
             }
           }
         }

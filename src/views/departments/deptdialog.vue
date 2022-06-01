@@ -56,7 +56,7 @@ export default {
     async loadDepartmentsDetail() {
       if (!this.isEdit) return
       const res = await getDepartmentsDetail(this.id)
-      console.log(res)
+      // console.log(res)
       // 数据回填
       this.form = res.data
     },
@@ -75,7 +75,7 @@ export default {
       // 2.发送请求
         this.form.pid = this.id
         const res = await addDepartments(this.form)
-        console.log(res)
+        // console.log(res)
         // 3.提示信息
         this.$message.success(res.message)
         // 4.关闭dialog
@@ -92,7 +92,7 @@ export default {
       // 1.兜底校验
       // 2.发送请求
         const res = await editDepartmentsById(this.form)
-        console.log(res)
+        // console.log(res)
         // 3.提示信息
         this.$message.success(res.message)
         // 4.关闭dialog
@@ -106,7 +106,7 @@ export default {
     async loadEmployees() {
       try {
         const res = await getEmployeesList()
-        console.log(res)
+        // console.log(res)
         this.employees = res.data
       } catch (e) {
         console.log(e)

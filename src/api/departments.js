@@ -30,3 +30,10 @@ export function editDepartmentsById(data) {
     data
   })
 }
+// 删除部门信息根据列表
+export function deleteDepartmentsById(id) {
+  return request({
+    method: 'delete',
+    url: '/company/department/' + id
+  })
+}

@@ -3,9 +3,10 @@
     <div class="app-container">
       <el-card>
         <!-- 用一个行列布局 -->
+        <!-- <svg-icon icon-class="cai" />svg图标 -->
         <el-row type="flex" justify="space-between" align="middle" style="height: 40px">
           <el-col :span="20">
-            <svg-icon icon-class="cai" /><span>江苏传智播客教育科技股份有限公司</span>
+            <span>江苏传智播客教育科技股份有限公司</span>
           </el-col>
           <el-col :span="4">
             <el-row type="flex" justify="end">
@@ -18,17 +19,18 @@
                     操作<i class="el-icon-arrow-down" />
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="hAddShow">添加子部门</el-dropdown-item>
+                    <!-- '': 一级部门的pid都是'' -->
+                    <el-dropdown-item @click.native="hAddShow('')">添加子部门</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-col>
             </el-row>
           </el-col>
         </el-row>
+        <!-- highlight-current当前高亮 -->
         <el-tree
           :data="list"
           default-expand-all
-          highlight-current
         >
           <!-- 作用域插槽 data拿到的是每一个子节点的对象 -->
           <!--
@@ -51,8 +53,9 @@
                         操作<i class="el-icon-arrow-down" />
                       </span>
                       <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item @click.native="hAddShow(data)">添加子部门</el-dropdown-item>
-                        <el-dropdown-item @click.native="hEditShow(data)">编辑部门</el-dropdown-item>
+                        <el-dropdown-item @click.native="hAddShow(data.id)">添加子部门</el-dropdown-item>
+                        <el-dropdown-item @click.native="hEditShow(data.id)">编辑部门</el-dropdown-item>
+                        <el-dropdown-item @click.native="hDelShow(data.id)">删除部门</el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
                   </el-col>
@@ -63,8 +66,9 @@
         </el-tree>
       </el-card>
     </div>
+    <!-- 根据isEdit不同的boolean值，决定显示不同的标题： 添加和编辑。 -->
     <el-dialog
-      title="添加子部门"
+      :title="isEdit? '编辑部门':'添加子部门'"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       :visible.sync="showVisible"
@@ -72,19 +76,21 @@
     >
       <add-or-edit v-if="showVisible" :id="curId" :is-edit="isEdit" @success="hSuccess" />
     </el-dialog>
+    <!-- 根据isEdit不同的boolean值，决定显示不同的标题： 添加和编辑。 -->
     <el-dialog
-      title="编辑部门"
+      :title="isEdit?'编辑部门':'添加子部门'"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       :visible.sync="showVisibleEdit"
       width="55%"
     >
+      <!-- 在关闭弹层时，把**子组件销毁**，再次打开时，重新创建(created再走一遍)，就重发请求 -->
       <add-or-edit v-if="showVisibleEdit" :id="curId" :is-edit="isEdit" @edit="hEdit" />
     </el-dialog>
   </div>
 </template>
 <script>
-import { getDepartmentsList } from '@/api/departments'
+import { getDepartmentsList, deleteDepartmentsById } from '@/api/departments'
 import { tranListToTreeData } from '@/utils'
 // 导入子组件 装表单内容
 import addOrEdit from '@/views/departments/deptdialog.vue'
@@ -132,9 +138,9 @@ export default {
         console.log(e)
       }
     },
-    hAddShow(data) {
+    hAddShow(id) {
       this.showVisible = true
-      this.curId = data.id
+      this.curId = id
       this.isEdit = false
     },
     // 子向父传值 自定义方法
@@ -148,10 +154,30 @@ export default {
       this.showVisibleEdit = false
       this.loadDepartmentsList()
     },
-    hEditShow(data) {
+    hEditShow(id) {
       this.showVisibleEdit = true
-      this.curId = data.id
+      this.curId = id
       this.isEdit = true
+    },
+    hDelShow(id) {
+      this.$confirm('确定要删除吗？', '提示', { type: 'warning' })
+        .then(() => {
+          this.doDel(id)
+        })
+        .catch((e) => {})
+    },
+    async doDel(id) {
+      try {
+        // 1.发请求
+        const res = await deleteDepartmentsById(id)
+        console.log(res)
+        // 2.提示用户
+        this.$message.success(res.message)
+        // 3渲染数据信息
+        this.loadDepartmentsList()
+      } catch (e) {
+        this.$message.error(e.message)
+      }
     }
   }
 }
