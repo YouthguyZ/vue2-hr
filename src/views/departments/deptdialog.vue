@@ -64,8 +64,17 @@ export default {
     }
     // 自定义校验 同级不能重复命名
     const nameValida = (rule, value, callback) => {
+      // 需求 1.让同级不能重复命名
+      // nameList = this.originList.filter(item => item.pid === this.id).map(({ name }) => name)
       let nameList = this.originList.map(({ name }) => { name })
+      // 解决需求 2. 编辑时根据id 判断兄弟部门是否在其中
+      if (this.isEdit) {
+        const pid = this.originList.find(item => item.id === this.id).pid
+        // 根据pid过滤出所有子部门，就是兄弟部门
+        nameList = this.originList.filter(item => item.pid === pid && item.id !== this.id).map(({ name }) => name)
+      }
       nameList = this.originList.filter(item => item.pid === this.id).map(({ name }) => name)
+      // 判断
       if (nameList.includes(value)) {
         callback(new Error(name + value + '已存在'))
       } else {
