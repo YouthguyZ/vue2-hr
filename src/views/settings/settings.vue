@@ -20,10 +20,10 @@
               <el-table-column label="角色名称" width="240" prop="name" />
               <el-table-column label="描述" prop="description" />
               <el-table-column label="操作">
-                <template slot-scope="scope">
+                <template v-slot="{row}">
                   <el-button size="small" type="success">分配权限</el-button>
                   <el-button size="small" type="primary">编辑</el-button>
-                  <el-button size="small" type="danger">删除</el-button>
+                  <el-button size="small" type="danger" @click="hDel(row.id)">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -47,7 +47,7 @@
   </div>
 </template>
 <script>
-import { getRoles } from '@/api/roles'
+import { getRoles, delRolesById } from '@/api/roles'
 export default {
   data() {
     return {
@@ -80,6 +80,18 @@ export default {
     hCurrentChange(page) {
       this.q.page = page
       this.loadRoles()
+    },
+    hDel(id) {
+      this.$confirm('确定要删除吗？', '提示', { type: 'warning' })
+        .then(async() => {
+          // 发ajax请求
+          const res = await delRolesById(id)
+          // 提示用户信息
+          this.$message.success(res.message)
+          // 更新列表渲染
+          this.loadRoles()
+        })
+        .catch(() => {})
     }
   }
 }

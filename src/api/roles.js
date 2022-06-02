@@ -8,3 +8,11 @@ export function getRoles(params) {
     params
   })
 }
+// 根据id删除信息
+export function delRolesById(id) {
+  return request({
+    method: 'delete',
+    url: '/sys/role/' + id
+  })
+}
+
