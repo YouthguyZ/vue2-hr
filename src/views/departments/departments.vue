@@ -52,10 +52,11 @@
                       <span>
                         操作<i class="el-icon-arrow-down" />
                       </span>
+                      <!-- v-if="data.children.length===0" 当有子部门时删除部门下拉框不显示 优化删除功能 -->
                       <el-dropdown-menu slot="dropdown">
                         <el-dropdown-item @click.native="hAddShow(data.id)">添加子部门</el-dropdown-item>
                         <el-dropdown-item @click.native="hEditShow(data.id)">编辑部门</el-dropdown-item>
-                        <el-dropdown-item @click.native="hDelShow(data.id)">删除部门</el-dropdown-item>
+                        <el-dropdown-item v-if="data.children.length===0" @click.native="hDelShow(data.id)">删除部门</el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
                   </el-col>
@@ -74,7 +75,7 @@
       :visible.sync="showVisible"
       width="55%"
     >
-      <add-or-edit v-if="showVisible" :id="curId" :is-edit="isEdit" @success="hSuccess" />
+      <add-or-edit v-if="showVisible" :id="curId" :origin-list="originList" :is-edit="isEdit" @close="hCancel" @success="hSuccess" />
     </el-dialog>
     <!-- 根据isEdit不同的boolean值，决定显示不同的标题： 添加和编辑。 -->
     <el-dialog
@@ -85,7 +86,7 @@
       width="55%"
     >
       <!-- 在关闭弹层时，把**子组件销毁**，再次打开时，重新创建(created再走一遍)，就重发请求 -->
-      <add-or-edit v-if="showVisibleEdit" :id="curId" :is-edit="isEdit" @edit="hEdit" />
+      <add-or-edit v-if="showVisibleEdit" :id="curId" :origin-list="originList" :is-edit="isEdit" @close="hCancel" @edit="hEdit" />
     </el-dialog>
   </div>
 </template>
@@ -119,7 +120,8 @@ export default {
       showVisible: false,
       curId: '',
       isEdit: false,
-      showVisibleEdit: false
+      showVisibleEdit: false,
+      originList: []
     }
   },
   created() {
@@ -131,6 +133,10 @@ export default {
         const res = await getDepartmentsList()
         // console.log(res.data.depts)
         res.data.depts.shift()
+        // 筛选源数组
+        this.originList = res.data.depts.map(item => {
+          return { id: item.id, code: item.code, pid: item.pid, name: item.name }
+        })
         // this.list = res.data.depts
         // 用工具函数 扁平数组转换为树状数组
         this.list = tranListToTreeData(res.data.depts)
@@ -178,6 +184,10 @@ export default {
       } catch (e) {
         this.$message.error(e.message)
       }
+    },
+    hCancel() {
+      this.showVisible = false
+      this.showVisibleEdit = false
     }
   }
 }
