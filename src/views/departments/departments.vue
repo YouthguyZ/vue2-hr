@@ -75,8 +75,10 @@
       :visible.sync="showVisible"
       width="55%"
     >
+      <!-- 注册使用子组件  -->
       <add-or-edit v-if="showVisible" :id="curId" :origin-list="originList" :is-edit="isEdit" @close="hCancel" @success="hSuccess" />
     </el-dialog>
+
     <!-- 根据isEdit不同的boolean值，决定显示不同的标题： 添加和编辑。 -->
     <el-dialog
       :title="isEdit?'编辑部门':'添加子部门'"
