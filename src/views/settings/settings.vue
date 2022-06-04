@@ -81,17 +81,40 @@ export default {
       this.q.page = page
       this.loadRoles()
     },
-    hDel(id) {
-      this.$confirm('确定要删除吗？', '提示', { type: 'warning' })
-        .then(async() => {
-          // 发ajax请求
-          const res = await delRolesById(id)
-          // 提示用户信息
-          this.$message.success(res.message)
-          // 更新列表渲染
-          this.loadRoles()
-        })
-        .catch(() => {})
+    async hDel(id) {
+      // this.$confirm('确定要删除吗？', '提示', { type: 'warning' })
+      //   .then(async() => {
+      //     // 发ajax请求
+      //     const res = await delRolesById(id)
+      //     // 提示用户信息
+      //     this.$message.success(res.message)
+      //     // 更新列表渲染
+      //     this.loadRoles()
+      //   })
+      //   .catch(() => {})
+
+      // 语法: await promise对象 (绝大部分场景都是这样)
+      // 返回值: 是 .then 第一个回调函数的第一个参数 (.then 的成功结果)
+      // const result = await this.$confirm('真的要删除吗?嘤嘤嘤!', '提示', { type: 'warning' })
+      // if (result === 'confirm') // 表示用户点了确定
+      // console.log(result) // confirm
+      // 如何表示用户点了取消呢? --> 直接点取消会报错
+      // 使用异常处理方案:
+      // await 最标准的异常处理方案: try - catch
+      try {
+        // 基础版优化嵌套 优化逻辑
+        await this.$confirm('确定要删除吗？', '提示', { type: 'warning' })
+        // 发ajax请求
+        const res = await delRolesById(id)
+        // 提示用户信息
+        this.$message.success(res.message)
+        // 更新列表渲染
+        this.loadRoles()
+      } catch (e) {
+        // 进入了 catch 表示用户点了取消
+        // 请求失败也会进入 catch
+        console.log(e)
+      }
     }
   }
 }
