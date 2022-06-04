@@ -12,6 +12,27 @@ import App from './App'
 import store from './store'
 import router from './router'
 
+// // 引入工具组件
+// import PageTools from '@/components/PageTools'
+// // 注册全局组件
+// // Vue.component('组件名', 组件对象)
+// Vue.component(PageTools.name, PageTools)
+
+// // 1. Vue.use 可以接收一个对象，Vue.use(obj)
+// // 2. 对象obj中需要提供一个 **install** 函数
+// // 3. 在 Vue.use(obj) 时，会自动调用该 install 函数，并传入 Vue构造器
+// const MyPlugin = {
+//   install(Vue) {
+//     // console.log('install.....', Vue)
+//     Vue.component(PageTools.name, PageTools)
+//   }
+// }
+// Vue.use(MyPlugin)
+// 导入组件
+import MyUi from '@/components'
+// 全局注册使用
+Vue.use(MyUi)
+
 import '@/icons' // icon
 import '@/permission' // permission control
 
