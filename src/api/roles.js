@@ -15,4 +15,12 @@ export function delRolesById(id) {
     url: '/sys/role/' + id
   })
 }
+// 添加角色
+export function addRoles(data) {
+  return request({
+    method: 'post',
+    url: '/sys/role',
+    data
+  })
+}
 

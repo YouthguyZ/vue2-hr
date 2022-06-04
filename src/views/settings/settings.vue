@@ -11,6 +11,7 @@
                 icon="el-icon-plus"
                 size="small"
                 type="primary"
+                @click="showDialog=true"
               >新增角色</el-button>
             </el-row>
             <!-- 表格 -->
@@ -22,7 +23,7 @@
               <el-table-column label="操作">
                 <template v-slot="{row}">
                   <el-button size="small" type="success">分配权限</el-button>
-                  <el-button size="small" type="primary">编辑</el-button>
+                  <el-button size="small" type="primary" @click="hEdit(row)">编辑</el-button>
                   <el-button size="small" type="danger" @click="hDel(row.id)">删除</el-button>
                 </template>
               </el-table-column>
@@ -44,10 +45,33 @@
         </el-tabs>
       </el-card>
     </div>
+    <!-- 新增弹框 -->
+    <el-dialog
+      title="编辑弹层"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="showDialog"
+    >
+      <el-form ref="roleForm" :model="roleForm" :rules="rules" label-width="100px">
+        <el-form-item label="角色名称" prop="name">
+          <el-input v-model="roleForm.name" />
+        </el-form-item>
+        <el-form-item label="角色描述">
+          <el-input v-model="roleForm.description" />
+        </el-form-item>
+      </el-form>
+      <!-- 底部 -->
+      <el-row slot="footer" type="flex" justify="center">
+        <el-col :span="6">
+          <el-button size="small">取消</el-button>
+          <el-button size="small" type="primary" @click="hSubmit">确定</el-button>
+        </el-col>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 <script>
-import { getRoles, delRolesById } from '@/api/roles'
+import { getRoles, delRolesById, addRoles } from '@/api/roles'
 export default {
   data() {
     return {
@@ -56,7 +80,15 @@ export default {
         pagesize: 2
       },
       roles: [],
-      total: 0
+      total: 0,
+      showDialog: false,
+      roleForm: {
+        name: '',
+        description: ''
+      },
+      rules: {
+        name: [{ required: true, message: '角色名称不能为空', trigger: 'blur' }]
+      }
     }
   },
   created() {
@@ -66,7 +98,7 @@ export default {
     async loadRoles() {
       try {
         const res = await getRoles(this.q)
-        console.log(res)
+        // console.log(res)
         this.roles = res.data.rows
         this.total = res.data.total
       } catch (e) {
@@ -108,6 +140,10 @@ export default {
         const res = await delRolesById(id)
         // 提示用户信息
         this.$message.success(res.message)
+        // 修复删除小bug 最后一页删除完变空白
+        if (this.roles.length === 1 && this.q.page > 1) {
+          this.q.page--
+        }
         // 更新列表渲染
         this.loadRoles()
       } catch (e) {
@@ -115,6 +151,36 @@ export default {
         // 请求失败也会进入 catch
         console.log(e)
       }
+    },
+    hSubmit() {
+      // 1.兜底校验
+      this.$refs.roleForm.validate(async valid => {
+        if (!valid) return
+        try {
+          // 2.发请求
+          const res = await addRoles(this.roleForm)
+          // console.log(res)
+          // 3.提示用户
+          if (res.code !== 10000) return this.$message.error(res.message)
+          this.$message.success(res.message)
+          // 4.关闭dialog
+          this.showDialog = false
+          // total取余页条数
+          if (this.total % this.q.pagesize === 0) {
+            this.total++
+          }
+          // 新增数据后跳到后一面 页数向上取整
+          this.q.page = Math.ceil(this.total / this.q.pagesize)
+          // 5.渲染更新页面
+          this.loadRoles()
+        } catch (e) { console.log(e) }
+      })
+    },
+    hEdit(row) {
+      // 显示dialog
+      this.showDialog = true
+      // 数据回填
+      this.roleForm = row
     }
   }
 }

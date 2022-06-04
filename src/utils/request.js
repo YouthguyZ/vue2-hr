@@ -40,7 +40,7 @@ service.interceptors.response.use(function(response) {
 }, function(error) {
   console.dir(error)
   // 对响应错误做点什么
-  if (error.response.data.code === 10002) {
+  if (error.response && error.response.data.code === 10002) {
     // 退出登录
     store.dispatch('user/logout')
     // console.log(location.hash)=> #/form/index
