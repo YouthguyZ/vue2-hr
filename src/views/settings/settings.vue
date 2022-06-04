@@ -11,7 +11,7 @@
                 icon="el-icon-plus"
                 size="small"
                 type="primary"
-                @click="showDialog=true"
+                @click="hAdd"
               >新增角色</el-button>
             </el-row>
             <!-- 表格 -->
@@ -71,7 +71,7 @@
   </div>
 </template>
 <script>
-import { getRoles, delRolesById, addRoles } from '@/api/roles'
+import { getRoles, delRolesById, addRoles, updateRoles } from '@/api/roles'
 export default {
   data() {
     return {
@@ -88,7 +88,9 @@ export default {
       },
       rules: {
         name: [{ required: true, message: '角色名称不能为空', trigger: 'blur' }]
-      }
+      },
+      // 设置状态
+      isEdit: false
     }
   },
   created() {
@@ -156,31 +158,56 @@ export default {
       // 1.兜底校验
       this.$refs.roleForm.validate(async valid => {
         if (!valid) return
-        try {
-          // 2.发请求
-          const res = await addRoles(this.roleForm)
-          // console.log(res)
-          // 3.提示用户
-          if (res.code !== 10000) return this.$message.error(res.message)
-          this.$message.success(res.message)
-          // 4.关闭dialog
-          this.showDialog = false
-          // total取余页条数
-          if (this.total % this.q.pagesize === 0) {
-            this.total++
-          }
-          // 新增数据后跳到后一面 页数向上取整
-          this.q.page = Math.ceil(this.total / this.q.pagesize)
-          // 5.渲染更新页面
-          this.loadRoles()
-        } catch (e) { console.log(e) }
+        // 三元判断
+        this.isEdit ? this.doEdit() : this.doAdd()
       })
+    },
+    async doAdd() {
+      try {
+        // 2.发请求
+        const res = await addRoles(this.roleForm)
+        // console.log(res)
+        // 3.提示用户
+        if (res.code !== 10000) return this.$message.error(res.message)
+        this.$message.success(res.message)
+        // 4.关闭dialog
+        this.showDialog = false
+        // total取余页条数
+        if (this.total % this.q.pagesize === 0) {
+          this.total++
+        }
+        // 新增数据后跳到后一面 页数向上取整
+        this.q.page = Math.ceil(this.total / this.q.pagesize)
+        // 5.渲染更新页面
+        this.loadRoles()
+      } catch (e) { console.log(e) }
+    },
+    async doEdit() {
+      try {
+        // 2.发请求
+        const res = await updateRoles(this.roleForm)
+        console.log(res)
+        // 3.提示用户
+        if (res.code !== 10000) return this.$message.error(res.message)
+        this.$message.success(res.message)
+        // 4.关闭dialog
+        this.showDialog = false
+        // 5.渲染更新页面
+        this.loadRoles()
+      } catch (e) { console.log(e) }
     },
     hEdit(row) {
       // 显示dialog
       this.showDialog = true
-      // 数据回填
-      this.roleForm = row
+      // 数据回填 浅拷贝变深拷贝
+      this.roleForm = { ...row }
+      // 设置状态
+      this.isEdit = true
+    },
+    hAdd() {
+      this.showDialog = true
+      // 设置状态
+      this.isEdit = false
     }
   }
 }
