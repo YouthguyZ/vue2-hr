@@ -81,7 +81,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-// 头像样式
+// 头像样式 尺寸
   .avatar{
     width: 50px;
     height: 50px;
