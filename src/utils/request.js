@@ -3,6 +3,7 @@ import axios from 'axios'
 import store from '@/store'
 // 导入router
 import router from '@/router'
+import { Message } from 'element-ui'
 
 // create an axios instance
 const service = axios.create({
@@ -54,6 +55,7 @@ service.interceptors.response.use(function(response) {
         return_url: location.hash.substring(1)
       }
     })
+    Message.error('身份认证已过期，请重新登录')
   }
   return Promise.reject(error)
 })

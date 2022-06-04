@@ -30,7 +30,7 @@
             </template>
           </el-table-column>
           <el-table-column label="部门" prop="departmentName" />
-          <el-table-column label="入职时间" prop="timeOfEntry" />
+          <el-table-column sortable label="入职时间" prop="timeOfEntry" />
           <el-table-column label="操作" width="280">
             <template>
               <el-button type="text" size="small">查看</el-button>
@@ -46,6 +46,13 @@
 <script>
 import EmployeesMenu from '@/constant/employees'
 import { getEmployees } from '../../api/employees'
+// 准备一个映射对象, 最终目标是: { 1: '正式', 2: '非正式' }
+const hireTypeMap = {}
+// 可选作业: 把 forEach 变成 reduce
+// 执行循环后达成目标: { 1: '正式', 2: '非正式' } 不是很理解？
+EmployeesMenu.hireType.forEach(item => {
+  hireTypeMap[item.id] = item.value
+})
 export default {
   data() {
     return {
@@ -69,13 +76,14 @@ export default {
     },
     formatEmployees(code) { // code===1,code===2
     // hireType 引进constant里定义的常量
-      const result = EmployeesMenu.hireType.find(item => item.id === code)
-      // return result.value
-      if (result) {
-        return result.value
-      } else {
-        return '未知'
-      }
+      // const result = EmployeesMenu.hireType.find(item => item.id === code)
+      // // return result.value
+      // if (result) {
+      //   return result.value
+      // } else {
+      //   return '未知'
+      // }
+      return hireTypeMap[code]
     }
   }
 }
