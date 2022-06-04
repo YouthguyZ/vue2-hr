@@ -36,8 +36,8 @@ import social_securitys from './modules/social_securitys'
 export const asyncRoutes = [
   // 放动态组件 将来放8个组件
   departments,
-  employees,
   settings,
+  employees,
   permissions,
   approvals,
   attendances,

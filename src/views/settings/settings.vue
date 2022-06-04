@@ -47,10 +47,11 @@
     </div>
     <!-- 新增弹框 -->
     <el-dialog
-      title="编辑弹层"
+      :title="isEdit?'编辑':'添加'"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       :visible.sync="showDialog"
+      @closed="hClose"
     >
       <el-form ref="roleForm" :model="roleForm" :rules="rules" label-width="100px">
         <el-form-item label="角色名称" prop="name">
@@ -63,7 +64,7 @@
       <!-- 底部 -->
       <el-row slot="footer" type="flex" justify="center">
         <el-col :span="6">
-          <el-button size="small">取消</el-button>
+          <el-button size="small" @click="showDialog=false">取消</el-button>
           <el-button size="small" type="primary" @click="hSubmit">确定</el-button>
         </el-col>
       </el-row>
@@ -208,6 +209,15 @@ export default {
       this.showDialog = true
       // 设置状态
       this.isEdit = false
+    },
+    hClose() {
+      // 清空表单
+      this.roleForm = {
+        name: '',
+        description: ''
+      }
+      // 重置表单清空校验
+      this.$refs.roleForm.clearValidate()
     }
   }
 }
