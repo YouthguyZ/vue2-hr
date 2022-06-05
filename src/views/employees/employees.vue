@@ -6,7 +6,7 @@
           <span>本月{{ total }}</span>
         </template>
         <template #right>
-          <el-button type="warning">导入Excel</el-button>
+          <el-button type="warning" @click="$router.push('/employees/import')">导入Excel</el-button>
           <el-button type="danger">导出Excel</el-button>
           <el-button type="primary" @click="showDialog=true">新增员工</el-button>
         </template>

@@ -75,9 +75,9 @@ export default {
       departments: []
     }
   },
-  created() {
-    this.loadDepartment()
-  },
+  // created() {
+  //   this.loadDepartment()
+  // },
   methods: {
     async hSubmit() {
       try {

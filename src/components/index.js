@@ -1,5 +1,6 @@
 // 引入工具组件
 import PageTools from '@/components/PageTools'
+import UploadExcel from '@/components/UploadExcel'
 
 // 1. Vue.use 可以接收一个对象，Vue.use(obj)
 // 2. 对象obj中需要提供一个 **install** 函数
@@ -8,6 +9,7 @@ export default {
   install(Vue) {
     // console.log('install.....', Vue)
     Vue.component(PageTools.name, PageTools)
+    Vue.component(UploadExcel.name, UploadExcel)
   }
 }
 
