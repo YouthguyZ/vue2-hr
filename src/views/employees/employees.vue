@@ -3,12 +3,12 @@
     <div class="app-container">
       <page-tools>
         <template #left>
-          <span>本月:社保在缴 公积金在缴</span>
+          <span>本月{{ total }}</span>
         </template>
         <template #right>
           <el-button type="warning">导入Excel</el-button>
           <el-button type="danger">导出Excel</el-button>
-          <el-button type="primary" @click="showDialog=true">员工信息</el-button>
+          <el-button type="primary" @click="showDialog=true">新增员工</el-button>
         </template>
       </page-tools>
       <el-card style="margin-top:20px">
@@ -30,7 +30,11 @@
             </template>
           </el-table-column>
           <el-table-column label="部门" prop="departmentName" />
-          <el-table-column sortable label="入职时间" prop="timeOfEntry" />
+          <el-table-column sortable label="入职时间">
+            <template v-slot="{row}">
+              {{ formatDate(row.timeOfEntry) }}
+            </template>
+          </el-table-column>
           <el-table-column label="操作" width="280">
             <template v-slot="{row}">
               <el-button type="text" size="small">查看</el-button>
@@ -55,12 +59,14 @@
       title="新增员工"
       :visible.sync="showDialog"
       width="35%"
+      @closed="$refs.empForm.resetForm()"
     >
-      <empDialog @close="showDialog=false" />
+      <empDialog ref="empForm" @success="hsuccess" @close="showDialog=false" />
     </el-dialog>>
   </div>
 </template>
 <script>
+import dayjs from 'dayjs'
 import EmployeesMenu from '@/constant/employees'
 import { getEmployees, delEmployees } from '../../api/employees'
 // 引入子组件 表单组件
@@ -81,7 +87,7 @@ export default {
       employees: [],
       q: {
         page: 1,
-        size: 10
+        size: 5
       },
       total: 0,
       showDialog: false
@@ -129,6 +135,22 @@ export default {
       } catch (e) {
         if (e === 'cancel') return
       }
+    },
+    async hsuccess() {
+      // 关闭dislog
+      this.showDialog = false
+      // 判断最后一页是否满了
+      // if (this.total % this.q.size === 0) {
+      //   this.total++
+      // }
+      this.total++
+      // 算出最后一页赋值给 this.q.page
+      this.q.page = Math.ceil(this.total / this.q.size)
+      // 更新数据
+      this.loadEmployees()
+    },
+    formatDate(date) {
+      return dayjs(date).format('YYYY-MM-DD')
     }
   }
 }
