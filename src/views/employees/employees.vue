@@ -39,6 +39,16 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination
+          class="pagination"
+          :current-page="q.page"
+          :page-sizes="[5, 8, 20, 25]"
+          :page-size="q.size"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+          @size-change="hSizeChange"
+          @current-change="hCurrentChange"
+        />
       </el-card>
     </div>
   </div>
@@ -84,6 +94,14 @@ export default {
       //   return '未知'
       // }
       return hireTypeMap[code]
+    },
+    hSizeChange(size) {
+      this.q.size = size
+      this.loadEmployees()
+    },
+    hCurrentChange(page) {
+      this.q.page = page
+      this.loadEmployees()
     }
   }
 }
@@ -93,5 +111,12 @@ export default {
   .avatar{
     width: 50px;
     height: 50px;
+  }
+  .pagination{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    margin-top: 15px;
   }
 </style>

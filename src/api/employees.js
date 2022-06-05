@@ -9,10 +9,10 @@ export function getEmployeesList() {
   })
 }
 // 获取员工信息
-export function getEmployees(parmas) {
+export function getEmployees(params) {
   return request({
     method: 'get',
     url: '/sys/user',
-    parmas
+    params
   })
 }
