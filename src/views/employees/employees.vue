@@ -130,6 +130,10 @@ export default {
         const res = await delEmployees(id)
         // 根据信息提示用户
         this.$message.success(res.message)
+        // 优化删除小bug 当删除时每一页就剩一条信息时且页数大于1时 删掉最后一页的最后一条信息就要页面减到上一页去
+        if (this.employees.length === 1 && this.q.page > 1) {
+          this.q.page--
+        }
         // 更新数据
         this.loadEmployees()
       } catch (e) {
@@ -144,7 +148,7 @@ export default {
       //   this.total++
       // }
       this.total++
-      // 算出最后一页赋值给 this.q.page
+      // 算出最后一页赋值给 this.q.page 添加成功就跳到新增那一页
       this.q.page = Math.ceil(this.total / this.q.size)
       // 更新数据
       this.loadEmployees()
