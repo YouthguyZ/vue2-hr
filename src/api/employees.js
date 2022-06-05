@@ -16,3 +16,10 @@ export function getEmployees(params) {
     params
   })
 }
+// 根据id删除员工信息
+export function delEmployees(id) {
+  return request({
+    method: 'delete',
+    url: `/sys/user/${id}`
+  })
+}

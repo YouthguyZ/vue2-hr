@@ -8,7 +8,7 @@
         <template #right>
           <el-button type="warning">导入Excel</el-button>
           <el-button type="danger">导出Excel</el-button>
-          <el-button type="primary">员工信息</el-button>
+          <el-button type="primary" @click="showDialog=true">员工信息</el-button>
         </template>
       </page-tools>
       <el-card style="margin-top:20px">
@@ -32,10 +32,10 @@
           <el-table-column label="部门" prop="departmentName" />
           <el-table-column sortable label="入职时间" prop="timeOfEntry" />
           <el-table-column label="操作" width="280">
-            <template>
+            <template v-slot="{row}">
               <el-button type="text" size="small">查看</el-button>
               <el-button type="text" size="small">分配角色</el-button>
-              <el-button type="text" size="small">删除</el-button>
+              <el-button type="text" size="small" @click="hDel(row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -51,11 +51,20 @@
         />
       </el-card>
     </div>
+    <el-dialog
+      title="新增员工"
+      :visible.sync="showDialog"
+      width="35%"
+    >
+      <empDialog @close="showDialog=false" />
+    </el-dialog>>
   </div>
 </template>
 <script>
 import EmployeesMenu from '@/constant/employees'
-import { getEmployees } from '../../api/employees'
+import { getEmployees, delEmployees } from '../../api/employees'
+// 引入子组件 表单组件
+import empDialog from '@/views/employees/employeesDialog.vue'
 // 准备一个映射对象, 最终目标是: { 1: '正式', 2: '非正式' }
 const hireTypeMap = {}
 // 可选作业: 把 forEach 变成 reduce
@@ -64,6 +73,9 @@ EmployeesMenu.hireType.forEach(item => {
   hireTypeMap[item.id] = item.value
 })
 export default {
+  components: {
+    empDialog
+  },
   data() {
     return {
       employees: [],
@@ -71,7 +83,8 @@ export default {
         page: 1,
         size: 10
       },
-      total: 0
+      total: 0,
+      showDialog: false
     }
   },
   created() {
@@ -102,6 +115,20 @@ export default {
     hCurrentChange(page) {
       this.q.page = page
       this.loadEmployees()
+    },
+    async hDel(id) {
+      try {
+        // 弹框提示用户
+        await this.$confirm('确定删除吗？', '提示', { type: 'warning' })
+        // 发请求
+        const res = await delEmployees(id)
+        // 根据信息提示用户
+        this.$message.success(res.message)
+        // 更新数据
+        this.loadEmployees()
+      } catch (e) {
+        if (e === 'cancel') return
+      }
     }
   }
 }
