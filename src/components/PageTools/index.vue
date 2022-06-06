@@ -6,12 +6,14 @@
         <div class="tips">
           <i class="el-icon-info" />
           <!-- <span>文字区域</span> -->
+          <!-- 作用域插槽 -->
           <slot name="left" />
         </div>
       </div>
       <div class="right">
         <!-- 右侧 -->
         <!-- 按钮区域 -->
+        <!-- 作用域插槽 -->
         <slot name="right" />
       </div>
     </div>
