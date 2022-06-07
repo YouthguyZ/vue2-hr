@@ -7,7 +7,7 @@
         </template>
         <template #right>
           <el-button type="warning" @click="$router.push('/employees/import')">导入Excel</el-button>
-          <el-button type="danger">导出Excel</el-button>
+          <el-button type="danger" @click="hExport">导出Excel</el-button>
           <el-button type="primary" @click="showDialog=true">新增员工</el-button>
         </template>
       </page-tools>
@@ -62,7 +62,7 @@
       @closed="$refs.empForm.resetForm()"
     >
       <empDialog ref="empForm" @success="hsuccess" @close="showDialog=false" />
-    </el-dialog>>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -155,6 +155,60 @@ export default {
     },
     formatDate(date) {
       return dayjs(date).format('YYYY-MM-DD')
+    },
+    // 导出文件
+    async hExport() {
+      const mapInfo = {
+        'id': '编号',
+        'password': '密码',
+        'mobile': '手机号',
+        'username': '姓名',
+        'timeOfEntry': '入职日期',
+        'formOfEmployment': '聘用形式',
+        'correctionTime': '转正日期',
+        'workNumber': '工号',
+        'departmentName': '部门',
+        'staffPhoto': '头像地址'
+      }
+      // 发请求获取所有数据
+      const res = await getEmployees({ page: 1, size: this.total })
+      console.log(res)
+      const list = res.data.rows
+      // 遍历 list 找到每个元素, 将其属性名转为中文
+      // const zhList = list.map(enObj => {
+      //   const zhObj = {}
+      //   const enKeys = Object.keys(enObj)
+      //   enKeys.forEach(enKey => {
+      //     const zhKey = mapInfo[enKey]
+      //     zhObj[zhKey] = enObj[enKey]
+      //   })
+      //   return zhObj
+      // })
+      // 取第一个数据
+      // const first = zhList[0]
+      const first = list[0]
+      if (!first) return
+      // 取出 header
+      const header = Object.keys(first).map(enKey => mapInfo[enKey])
+      const data = list.map(item => {
+        const code = item['formOfEmployment']
+        item['formOfEmployment'] = hireTypeMap[code]
+        return Object.values(item)
+      })
+      // // 导出英文转中文
+      const excel = await import('@/vendor/Export2Excel')
+      // const tHeader = ['Id', 'Title', 'Author', 'Readings', 'Date']
+      // const filterVal = ['id', 'title', 'author', 'pageviews', 'display_time']
+      // const list = this.list
+      // const data = this.formatJson(list)
+      // 2. 导出 Excel (表头英文转中文)
+      excel.export_json_to_excel({
+        header: header, // 表头
+        data, // 数据
+        filename: '员工信息',
+        autoWidth: true,
+        bookType: 'xlsx' // 文件类型
+      })
     }
   }
 }
