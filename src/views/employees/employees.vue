@@ -37,7 +37,16 @@
           </el-table-column>
           <el-table-column label="操作" width="280">
             <template v-slot="{row}">
-              <el-button type="text" size="small">查看</el-button>
+              <!-- $router.push跳转携带参数的写法一 -->
+              <!-- @click="$router.push('/employees/detail?id'+row.id) -->
+              <el-button
+                type="text"
+                size="small"
+                @click="$router.push({
+                  path:'/employees/detail',
+                  query:{id:row.id}
+                })"
+              >查看</el-button>
               <el-button type="text" size="small">分配角色</el-button>
               <el-button type="text" size="small" @click="hDel(row.id)">删除</el-button>
             </template>

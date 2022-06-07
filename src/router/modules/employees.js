@@ -13,5 +13,11 @@ export default {
     component: () => import('@/views/employees/import.vue'),
     meta: { title: '员工', icon: 'people' },
     hidden: true
+  }, {
+    path: 'detail', // 作为默认渲染路由
+    name: 'detail',
+    component: () => import('@/views/employees/detail.vue'),
+    meta: { title: '员工', icon: 'people' },
+    hidden: true
   }]
 }
