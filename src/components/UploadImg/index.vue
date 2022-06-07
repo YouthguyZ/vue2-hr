@@ -12,8 +12,10 @@
       :before-upload="beforeAvatarUpload"
       :http-request="upload"
     >
-      <img v-if="imageUrl" :src="imageUrl" class="avatar">
-      <i v-else class="el-icon-plus avatar-uploader-icon" />
+      <el-progress v-if="percent && percent < 100" type="circle" :percentage="percent" />
+      <!-- <img v-if="imageUrl" :src="imageUrl" class="avatar"> -->
+      <img v-if="value" :src="value" class="avatar">
+      <i v-show="!percent" v-else class="el-icon-plus avatar-uploader-icon" />
     </el-upload>
   </div>
 </template>
@@ -29,9 +31,18 @@ const cos = new COS({
 })
 export default {
   name: 'UploadImg',
+  // v-modl 语法糖 接受父组件传过来的value
+  props: {
+    value: {
+      type: String,
+      required: true
+    }
+  },
   data() {
     return {
-      imageUrl: ''
+      // imageUrl: '',
+      percent: 0 // 上传进度
+      // showProgress: false // 是否展示进度条
     }
   },
   methods: {
@@ -46,12 +57,19 @@ export default {
         Region: 'ap-nanjing', /* 存储桶所在地域，必须字段 */
         Key: res.file.name, /* 文件名 */
         StorageClass: 'STANDARD', // 上传模式, 标准模式
-        Body: res.file // 上传文件对象
+        Body: res.file, // 上传文件对象
+        onProgress: (progressData) => {
+          // console.log(progressData)
+          // 进度条
+          this.percent = parseInt(progressData.percent * 100)
+        }
       }, (err, data) => {
         console.dir(err || data)
         // 上传成功之后
         if (data.statusCode === 200) {
-          this.imageUrl = `https:${data.Location}`
+          // this.imageUrl = `https:${data.Location}`
+          // 子组件触发父组件
+          this.$emit('input', `https:${data.Location}`)
         }
       })
     },
@@ -94,8 +112,14 @@ export default {
   text-align: center;
 }
 .avatar {
-  width: 178px;
-  height: 178px;
+  /* width: 178px;
+  height: 178px; */
+  width: 160px;
+  height: 160px;
   display: block;
+}
+.el-progress-circle {
+  width: 160px !important;
+  height: 160px !important;
 }
 </style>
