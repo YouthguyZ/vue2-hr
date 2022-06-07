@@ -2,6 +2,8 @@
 import PageTools from '@/components/PageTools'
 // 引入组件花裤衩excel导出处理的
 import UploadExcel from '@/components/UploadExcel'
+// 全局注册uploadimg
+import UploadImg from '@/components/UploadImg'
 
 // 1. Vue.use 可以接收一个对象，Vue.use(obj)
 // 2. 对象obj中需要提供一个 **install** 函数
@@ -12,6 +14,8 @@ export default {
     Vue.component(PageTools.name, PageTools)
     // 导出excel
     Vue.component(UploadExcel.name, UploadExcel)
+    // 头像组件
+    Vue.component(UploadImg.name, UploadImg)
   }
 }
 

@@ -44,3 +44,19 @@ export function importEmployee(data) {
     data
   })
 }
+// 获取用户信息
+export function getUserDetailById(id) {
+  return request({
+    method: 'get',
+    url: `/sys/user/${id}`
+  })
+}
+
+// 修改用户信息
+export function updateUserDetailById(data) {
+  return request({
+    method: 'put',
+    url: `/sys/user/${data.id}`,
+    data
+  })
+}
