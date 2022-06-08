@@ -23,7 +23,7 @@
         </el-table>
       </el-card>
     </div>
-    <el-dialog :visible.sync="showDialog" title="弹层标题">
+    <el-dialog :visible.sync="showDialog" title="弹层标题" @closed="hClosed">
       <!-- 表单内容 -->
       <el-form label-width="100px">
         <el-form-item label="权限名称">
@@ -49,14 +49,14 @@
       <template #footer>
         <div style="text-align: right;">
           <el-button @click="showDialog = false">取消</el-button>
-          <el-button type="primary">确定</el-button>
+          <el-button type="primary" @click="hSubmit">确定</el-button>
         </div>
       </template>
     </el-dialog>
   </div>
 </template>
 <script>
-import { getPermissionList } from '@/api/permissions'
+import { getPermissionList, addPermission } from '@/api/permissions'
 import { tranListToTreeData } from '../../utils'
 export default {
   data() {
@@ -84,8 +84,41 @@ export default {
       this.permission = tranListToTreeData(res.data)
     },
     hAdd(type, pid) {
-      console.log(type, pid)
+      // console.log(type, pid)
+      // 设置表单数据
+      this.formData.type = type
+      this.formData.pid = pid
+      // 打开dialog
       this.showDialog = true
+    },
+    async hSubmit() {
+      // 表单校验
+      try {
+        // 发请求
+        const res = await addPermission(this.formData)
+        // 提示用户
+        this.$message.success(res.message)
+        this.showDialog = false
+        // 更新数据渲染
+        this.loadPermission()
+      } catch (e) {
+        this.$message.success(e.message)
+      }
+    },
+    // dialog 清除表单
+    hClosed() {
+      // 清空表单数据
+      this.formData = {
+        name: '', // 名称
+        code: '', // 权限标识
+        description: '', // 描述
+        enVisible: '0', // 开启
+        pid: '', // 添加到哪个节点下
+        type: '' // 类型
+      }
+      // 清空表单校验
+      // this.$refs.form.resetFields()
+      // this.$refs.form.clearValidate()
     }
   }
 }
