@@ -48,7 +48,7 @@
                   query:{id:row.id}
                 })"
               >查看</el-button>
-              <el-button type="text" size="small">分配角色</el-button>
+              <el-button type="text" size="small" @click="hAssign(row.id)">分配角色</el-button>
               <el-button type="text" size="small" @click="hDel(row.id)">删除</el-button>
             </template>
           </el-table-column>
@@ -73,6 +73,14 @@
     >
       <empDialog ref="empForm" @success="hsuccess" @close="showDialog=false" />
     </el-dialog>
+    <!-- 分配角色弹窗 -->
+    <el-dialog
+      title="分配角色"
+      :visible.sync="showDialogRole"
+      width="45%"
+    >
+      <assign-role @close="showDialogRole=false" />
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -81,6 +89,7 @@ import EmployeesMenu from '@/constant/employees'
 import { getEmployees, delEmployees } from '../../api/employees'
 // 引入子组件 表单组件
 import empDialog from '@/views/employees/employeesDialog.vue'
+import assignRole from '@/views/employees/assignRole.vue'
 // 准备一个映射对象, 最终目标是: { 1: '正式', 2: '非正式' }
 const hireTypeMap = {}
 // 可选作业: 把 forEach 变成 reduce
@@ -90,7 +99,8 @@ EmployeesMenu.hireType.forEach(item => {
 })
 export default {
   components: {
-    empDialog
+    empDialog,
+    assignRole
   },
   data() {
     return {
@@ -100,7 +110,8 @@ export default {
         size: 5
       },
       total: 0,
-      showDialog: false
+      showDialog: false,
+      showDialogRole: false
     }
   },
   created() {
@@ -219,6 +230,10 @@ export default {
         autoWidth: true,
         bookType: 'xlsx' // 文件类型
       })
+    },
+    hAssign(id) {
+      console.log(id)
+      this.showDialogRole = true
     }
   }
 }
