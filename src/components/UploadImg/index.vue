@@ -14,7 +14,7 @@
     >
       <el-progress v-if="percent && percent < 100" type="circle" :percentage="percent" />
       <!-- <img v-if="imageUrl" :src="imageUrl" class="avatar"> -->
-      <img v-if="value" :src="value" class="avatar">
+      <img v-if="value && percent === 0" :src="value" class="avatar">
       <i v-show="!percent" v-else class="el-icon-plus avatar-uploader-icon" />
     </el-upload>
   </div>
@@ -69,7 +69,7 @@ export default {
         // 上传成功之后
         if (data.statusCode === 200) {
           // 进度复位
-          // this.percent === 0
+          this.percent = 0
           // this.imageUrl = `https:${data.Location}`
           // 子组件触发父组件
           this.$emit('input', `https:${data.Location}`)
