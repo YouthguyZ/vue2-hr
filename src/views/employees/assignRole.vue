@@ -15,7 +15,14 @@
 </template>
 <script>
 import { getRoles } from '../../api/roles'
+import { getDetailByid } from '../../api/user'
 export default {
+  props: {
+    id: {
+      type: String,
+      required: true
+    }
+  },
   data() {
     return {
       roleIds: [],
@@ -24,6 +31,7 @@ export default {
   },
   created() {
     this.loadRoles()
+    this.rolesIds()
   },
   methods: {
     async loadRoles() {
@@ -33,6 +41,12 @@ export default {
     },
     closeDialog() {
       this.$emit('close')
+    },
+    // 获取信息根据传过来的id 发请求获取当前rolesIds
+    async rolesIds() {
+      const res = await getDetailByid(this.id)
+      // console.log(res)
+      this.roleIds = res.data.roleIds
     }
   }
 }

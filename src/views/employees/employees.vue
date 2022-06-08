@@ -79,7 +79,9 @@
       :visible.sync="showDialogRole"
       width="45%"
     >
-      <assign-role @close="showDialogRole=false" />
+      <!-- 优化组件弹出时 显示 关闭时就销毁 -->
+      <!-- <assign-role v-if="showDialogRole" :id="curId" @close="showDialogRole=false" /> -->
+      <assign-role :id="curId" ref="assignRole" @close="showDialogRole=false" />
     </el-dialog>
   </div>
 </template>
@@ -111,7 +113,8 @@ export default {
       },
       total: 0,
       showDialog: false,
-      showDialogRole: false
+      showDialogRole: false,
+      curId: ''
     }
   },
   created() {
@@ -232,8 +235,15 @@ export default {
       })
     },
     hAssign(id) {
+      // 打开时就获取当前id传给子组件id
+      this.curId = id
       console.log(id)
       this.showDialogRole = true
+      // this.$nextTick
+      // 直接找到子组件，调用方法去获取最新的数据
+      this.$nextTick(() => {
+        this.$refs.assignRole.rolesIds()
+      })
     }
   }
 }
