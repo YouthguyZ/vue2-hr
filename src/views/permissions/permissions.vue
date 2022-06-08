@@ -16,14 +16,14 @@
               <!-- type为1时为页面级访问权限，它可以继续做添加： 设置页面下边某个功能是否可以操作 -->
               <!-- type为2时为按钮级别的访问权限，它就不能再继续细分了，它就没有添加了 -->
               <el-button v-if="row.type===1" type="text" @click="hAdd(2,row.id)">添加</el-button>
-              <el-button type="text">编辑</el-button>
-              <el-button type="text">删除</el-button>
+              <el-button type="text" @click="hEdit(row.id)">编辑</el-button>
+              <el-button type="text" @click="hDel(row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-card>
     </div>
-    <el-dialog :visible.sync="showDialog" title="弹层标题" @closed="hClosed">
+    <el-dialog :visible.sync="showDialog" :title="isEdit?'编辑':'添加'" @closed="hClosed">
       <!-- 表单内容 -->
       <el-form label-width="100px">
         <el-form-item label="权限名称">
@@ -56,7 +56,7 @@
   </div>
 </template>
 <script>
-import { getPermissionList, addPermission } from '@/api/permissions'
+import { getPermissionList, addPermission, delPermission, updatePermission, getPermissionDetail } from '@/api/permissions'
 import { tranListToTreeData } from '../../utils'
 export default {
   data() {
@@ -70,7 +70,8 @@ export default {
         enVisible: '0', // 开启
         pid: '', // 添加到哪个节点下
         type: '' // 类型
-      }
+      },
+      isEdit: false
     }
   },
   created() {
@@ -84,6 +85,7 @@ export default {
       this.permission = tranListToTreeData(res.data)
     },
     hAdd(type, pid) {
+      this.isEdit = false
       // console.log(type, pid)
       // 设置表单数据
       this.formData.type = type
@@ -92,10 +94,15 @@ export default {
       this.showDialog = true
     },
     async hSubmit() {
+      let res = null
       // 表单校验
+      if (this.isEdit) {
+        res = await updatePermission(this.formData)
+      } else {
+        res = await addPermission(this.formData)
+      }
       try {
         // 发请求
-        const res = await addPermission(this.formData)
         // 提示用户
         this.$message.success(res.message)
         this.showDialog = false
@@ -119,6 +126,34 @@ export default {
       // 清空表单校验
       // this.$refs.form.resetFields()
       // this.$refs.form.clearValidate()
+    },
+    async hDel(id) {
+      // 弹窗提示用户是否确认
+      const result = await this.$confirm('确认要删除吗', '提示', { type: 'warning' }).catch(e => e)
+      if (result !== 'confirm') return
+      try {
+        // 发请求
+        const res = await delPermission(id)
+        // 提示信息
+        this.$message.success(res.message)
+        // 更新渲染数据
+        this.loadPermission()
+      } catch (e) {
+        this.$message.error(e.message)
+      }
+    },
+    async hEdit(id) {
+      this.isEdit = true
+      try {
+        const res = await getPermissionDetail(id)
+        console.log(res)
+        // 数据回填
+        this.formData = res.data
+        this.showDialog = true
+        this.$message.success(res.message)
+      } catch (e) {
+        this.$message.error(e.message)
+      }
     }
   }
 }
