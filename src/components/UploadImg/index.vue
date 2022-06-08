@@ -35,7 +35,8 @@ export default {
   props: {
     value: {
       type: String,
-      required: true
+      // required: true
+      default: ''
     }
   },
   data() {
@@ -67,6 +68,8 @@ export default {
         console.dir(err || data)
         // 上传成功之后
         if (data.statusCode === 200) {
+          // 进度复位
+          // this.percent === 0
           // this.imageUrl = `https:${data.Location}`
           // 子组件触发父组件
           this.$emit('input', `https:${data.Location}`)

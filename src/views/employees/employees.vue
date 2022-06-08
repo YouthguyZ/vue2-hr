@@ -19,7 +19,8 @@
           <el-table-column label="姓名" prop="username" />
           <el-table-column label="头像">
             <template v-slot="{row}">
-              <img class="avatar" :src="row.staffPhoto" alt="">
+              <!-- <img class="avatar" :src="row.staffPhoto" alt=""> -->
+              <ImageHolder :src="row.staffPhoto" />
             </template>
           </el-table-column>
           <el-table-column label="手机号" prop="mobile" />
