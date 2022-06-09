@@ -25,14 +25,19 @@
     </div>
     <el-dialog :visible.sync="showDialog" :title="isEdit?'编辑':'添加'" @closed="hClosed">
       <!-- 表单内容 -->
-      <el-form label-width="100px">
-        <el-form-item label="权限名称">
+      <el-form
+        ref="form"
+        label-width="100px"
+        :model="formData"
+        :rules="rules"
+      >
+        <el-form-item label="权限名称" prop="name">
           <el-input v-model="formData.name" />
         </el-form-item>
-        <el-form-item label="权限标识">
+        <el-form-item label="权限标识" prop="code">
           <el-input v-model="formData.code" />
         </el-form-item>
-        <el-form-item label="权限描述">
+        <el-form-item label="权限描述" prop="description">
           <el-input v-model="formData.description" />
         </el-form-item>
         <el-form-item label="权限启用">
@@ -60,6 +65,36 @@ import { getPermissionList, addPermission, delPermission, updatePermission, getP
 import { tranListToTreeData } from '../../utils'
 export default {
   data() {
+    // 自定义校验 code name
+    const nameValida = (rule, value, callback) => {
+      let nameList = null
+      if (this.isEdit) {
+        nameList = this.originList.filter(item => item.pid === this.formData.pid && item.id !== this.formData.id).map(({ name }) => name)
+      } else {
+        // 添加时校验 不能添加子元素的名字
+        nameList = this.originList.filter(item => item.pid === this.formData.pid).map(({ name }) => name)
+      }
+      if (nameList.includes(value)) {
+        callback(new Error(name + value + '已存在'))
+      } else {
+        callback()
+      }
+    }
+    const codeValida = (rule, value, callback) => {
+      let codeList = null
+      // 添加时的校验：code不能重复
+      if (this.isEdit) {
+        // 编辑时的校验: code能取自己
+        codeList = this.originList.filter(item => item.id !== this.formData.id).map(({ code }) => code)
+      } else {
+        codeList = this.originList.map(({ code }) => code)
+      }
+      if (codeList.includes(value)) {
+        callback(new Error(value + '已存在'))
+      } else {
+        callback()
+      }
+    }
     return {
       permission: [],
       showDialog: false, // 是否显示弹层
@@ -71,7 +106,25 @@ export default {
         pid: '', // 添加到哪个节点下
         type: '' // 类型
       },
-      isEdit: false
+      rules: {
+        name: [
+          { required: true, message: '不能为空', trigger: 'blur' },
+          { min: 2, max: 10, message: '请输入2-10位的字符', trigger: 'blur' },
+          { validator: nameValida, trigger: 'blur' }
+        ],
+        code: [
+          { required: true, message: '不能为空', trigger: 'blur' },
+          { min: 2, max: 10, message: '请输入2-10位的字符', trigger: 'blur' },
+          { validator: codeValida, trigger: 'blur' }
+        ],
+        description: [
+          { required: true, message: '不能为空', trigger: 'blur' },
+          { min: 2, max: 10, message: '请输入2-10位的字符', trigger: 'blur' }
+          // { validator: nameValida, trigger: 'blur' }
+        ]
+      },
+      isEdit: false,
+      originList: []
     }
   },
   created() {
@@ -80,7 +133,11 @@ export default {
   methods: {
     async loadPermission() {
       const res = await getPermissionList()
-      // console.log(res)
+      console.log(res)
+      // 筛选所需数据
+      this.originList = res.data.map(item => {
+        return { id: item.id, code: item.code, name: item.name, pid: item.pid }
+      })
       // 转换树状图
       this.permission = tranListToTreeData(res.data)
     },
@@ -96,6 +153,8 @@ export default {
     async hSubmit() {
       let res = null
       // 表单校验
+      const valid = await this.$refs.form.validate().catch(e => e)
+      if (!valid) return
       if (this.isEdit) {
         res = await updatePermission(this.formData)
       } else {
@@ -125,7 +184,7 @@ export default {
       }
       // 清空表单校验
       // this.$refs.form.resetFields()
-      // this.$refs.form.clearValidate()
+      this.$refs.form.clearValidate()
     },
     async hDel(id) {
       // 弹窗提示用户是否确认
@@ -146,11 +205,11 @@ export default {
       this.isEdit = true
       try {
         const res = await getPermissionDetail(id)
-        console.log(res)
+        // console.log(res)
         // 数据回填
         this.formData = res.data
         this.showDialog = true
-        this.$message.success(res.message)
+        // this.$message.success(res.message)
       } catch (e) {
         this.$message.error(e.message)
       }
