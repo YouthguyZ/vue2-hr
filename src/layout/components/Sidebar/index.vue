@@ -31,7 +31,9 @@ export default {
       'sidebar'
     ]),
     routes() {
-      return this.$router.options.routes
+      // return this.$router.options.routes
+      // 拿到的是一个完整的包含了静态路由和动态路由的数据结构
+      return this.$store.state.menu.menuList
     },
     activeMenu() {
       const route = this.$route

@@ -16,10 +16,22 @@ router.beforeEach(async(to, from, next) => {
     // 已登录
     // 优化ajax请求发送 如果有userinfo信息 就不需要发请求获取个人信息
     if (!store.state.user.userInfo.userId) {
-      // 调用actions 获取用户信息加await 获取结果后再跳转
-      await store.dispatch('user/getProfile')
+      // 调用 actions 获取用户信息加 await 获取结果后再跳转
+      const res = await store.dispatch('user/getProfile')
+      console.log(res)
+      console.log(asyncRoutes)
+      // 过滤当前有的权限
+      const fifterRouter = asyncRoutes.filter(item => {
+        if (res.roles.menus.includes(item.children[0].name)) {
+          return true
+        }
+      })
       // 改写成动态添加的方式
-      router.addRoutes(asyncRoutes)
+      // router.addRoutes(asyncRoutes)
+      router.addRoutes(fifterRouter)
+      // 将动路由存到 vuex 中
+      // store.commit('menu/updateRouterList', asyncRoutes)
+      store.commit('menu/updateRouterList', fifterRouter)
     }
     // 开始进度条
     NProgress.start()

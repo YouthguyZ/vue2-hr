@@ -45,6 +45,8 @@ export default {
       const info = await getDetailByid(res.data.userId)
       // 把上边获取的两份合并在一起，保存到vuex中 ...扩展运算符
       context.commit('updateUserInfo', { ...res.data, ...info.data })
+      // 动态路由角色权限设计
+      return { ...res.data, ...info.data }
     },
     logout(context) {
       // 清空token
