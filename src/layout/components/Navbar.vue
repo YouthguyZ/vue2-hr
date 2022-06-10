@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import { resetRouter } from '@/router'
 import { mapGetters } from 'vuex'
 // import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
@@ -84,6 +85,8 @@ export default {
             }
           })
           // console.log('已退出')
+          // 清空 router
+          resetRouter()
         })
         .catch(() => {})
     }

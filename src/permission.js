@@ -14,6 +14,7 @@ router.beforeEach(async(to, from, next) => {
   const token = store.state.user.token
   if (token) {
     // 已登录
+    console.log(store.state.user.userInfo.userId)
     // 优化ajax请求发送 如果有userinfo信息 就不需要发请求获取个人信息
     if (!store.state.user.userInfo.userId) {
       // 调用 actions 获取用户信息加 await 获取结果后再跳转
@@ -26,12 +27,20 @@ router.beforeEach(async(to, from, next) => {
           return true
         }
       })
+      // 兜底动态路由 404
+      fifterRouter.push({ path: '*', redirect: '/404', hidden: true })
       // 改写成动态添加的方式
-      // router.addRoutes(asyncRoutes)
+      // router.addRoutes(asyncRoutes) 用户可以访问添加的路由 左侧菜单栏会消失
       router.addRoutes(fifterRouter)
-      // 将动路由存到 vuex 中
+      // 将动路由存到 vuex 中 就可以看到左侧菜单栏
       // store.commit('menu/updateRouterList', asyncRoutes)
       store.commit('menu/updateRouterList', fifterRouter)
+      // 解决刷新出现的白屏bug
+      console.log(1)
+      next({
+        ...to, // next({ ...to })的目的,是保证路由添加完了再进入页面 (可以理解为重进一次)
+        replace: true // 重进一次, 不保留重复历史
+      })
     }
     // 开始进度条
     NProgress.start()
