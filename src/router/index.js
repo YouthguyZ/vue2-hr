@@ -81,7 +81,9 @@ const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
   // 添加路由规则
-  routes: [...constantRoutes, ...asyncRoutes]
+  // routes: [...constantRoutes, ...asyncRoutes]
+  // 动态路由
+  routes: constantRoutes
 })
 
 const router = createRouter()

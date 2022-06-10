@@ -1,4 +1,4 @@
-import router from './router'
+import router, { asyncRoutes } from './router'
 import store from '@/store'
 // 导入进度条
 import NProgress from 'nprogress' // progress bar
@@ -18,6 +18,8 @@ router.beforeEach(async(to, from, next) => {
     if (!store.state.user.userInfo.userId) {
       // 调用actions 获取用户信息加await 获取结果后再跳转
       await store.dispatch('user/getProfile')
+      // 改写成动态添加的方式
+      router.addRoutes(asyncRoutes)
     }
     // 开始进度条
     NProgress.start()
