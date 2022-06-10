@@ -22,7 +22,7 @@
               <el-table-column label="描述" prop="description" />
               <el-table-column label="操作">
                 <template v-slot="{row}">
-                  <el-button size="small" type="success">分配权限</el-button>
+                  <el-button size="small" type="success" @click="hAssgin">分配权限</el-button>
                   <el-button size="small" type="primary" @click="hEdit(row)">编辑</el-button>
                   <el-button size="small" type="danger" @click="hDel(row.id)">删除</el-button>
                 </template>
@@ -69,11 +69,25 @@
         </el-col>
       </el-row>
     </el-dialog>
+    <!-- 新增弹框分配权限 -->
+    <el-dialog
+      title="分配权限"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="showDialogAssgin"
+    >
+      <assignPermission @close="showDialogAssgin=false" />
+    </el-dialog>
   </div>
 </template>
 <script>
+// 导入角色权限分配dialog组件
+import assignPermission from './assignPermission.vue'
 import { getRoles, delRolesById, addRoles, updateRoles } from '@/api/roles'
 export default {
+  components: {
+    assignPermission
+  },
   data() {
     return {
       q: {
@@ -91,7 +105,8 @@ export default {
         name: [{ required: true, message: '角色名称不能为空', trigger: 'blur' }]
       },
       // 设置状态
-      isEdit: false
+      isEdit: false,
+      showDialogAssgin: false
     }
   },
   created() {
@@ -218,6 +233,9 @@ export default {
       }
       // 重置表单清空校验
       this.$refs.roleForm.clearValidate()
+    },
+    hAssgin() {
+      this.showDialogAssgin = true
     }
   }
 }
