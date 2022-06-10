@@ -22,14 +22,24 @@
 <script>
 import { getPermissionList } from '../../api/permissions'
 import { tranListToTreeData } from '../../utils'
+import { getRolesDetail, assignPermission } from '../../api/roles'
 export default {
+  props: {
+    id: {
+      type: String,
+      required: true
+    }
+  },
   data() {
     return {
       permission: []
     }
   },
   created() {
+    // 获取所有的权限列表
     this.loadPermisson()
+    // 获取当前角色拥有的权限
+    this.loadRoleById()
   },
   methods: {
     async loadPermisson() {
@@ -37,9 +47,28 @@ export default {
       // 转树状结构
       this.permission = tranListToTreeData(res.data)
     },
-    hSubmit() {
-      const lds = this.$refs.tree.getCheckedNodes()
-      console.log(lds)
+    async hSubmit() {
+      try {
+        // 勾选项的 id
+        const lds = this.$refs.tree.getCheckedNodes()
+        console.log(lds)
+        const res = await assignPermission({ id: this.id, permIds: lds })
+        this.$message.success(res.message)
+        // 关闭dialog
+        this.$emit('close')
+      } catch (e) {
+        this.$message.error(e.message)
+      }
+    },
+    async loadRoleById() {
+      try {
+        // 获取角色列表 拿到 premIds
+        const res = await getRolesDetail(this.id)
+        console.log(res)
+        this.$refs.tree.setCheckedNodes(res.data.permIds)
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 

@@ -22,7 +22,7 @@
               <el-table-column label="描述" prop="description" />
               <el-table-column label="操作">
                 <template v-slot="{row}">
-                  <el-button size="small" type="success" @click="hAssgin">分配权限</el-button>
+                  <el-button size="small" type="success" @click="hAssgin(row.id)">分配权限</el-button>
                   <el-button size="small" type="primary" @click="hEdit(row)">编辑</el-button>
                   <el-button size="small" type="danger" @click="hDel(row.id)">删除</el-button>
                 </template>
@@ -76,7 +76,7 @@
       :close-on-press-escape="false"
       :visible.sync="showDialogAssgin"
     >
-      <assignPermission @close="showDialogAssgin=false" />
+      <assignPermission v-if="showDialogAssgin" :id="curId" @close="showDialogAssgin=false" />
     </el-dialog>
   </div>
 </template>
@@ -106,7 +106,8 @@ export default {
       },
       // 设置状态
       isEdit: false,
-      showDialogAssgin: false
+      showDialogAssgin: false,
+      curId: ''
     }
   },
   created() {
@@ -234,8 +235,9 @@ export default {
       // 重置表单清空校验
       this.$refs.roleForm.clearValidate()
     },
-    hAssgin() {
+    hAssgin(id) {
       this.showDialogAssgin = true
+      this.curId = id
     }
   }
 }

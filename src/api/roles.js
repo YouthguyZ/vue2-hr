@@ -31,3 +31,18 @@ export function updateRoles(data) {
     data
   })
 }
+// 获取角色信息
+export function getRolesDetail(id) {
+  return request({
+    method: 'get',
+    url: '/sys/role/' + id
+  })
+}
+// 修改角色权限信息
+export function assignPermission(data) {
+  return request({
+    method: 'put',
+    url: '/sys/role/assignPrem',
+    data
+  })
+}
