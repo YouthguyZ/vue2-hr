@@ -56,6 +56,18 @@ Vue.use(ElementUI)
 
 Vue.config.productionTip = false
 
+// 全局注册 自定义指令
+Vue.directive('allow', {
+  inserted: function(el, binding) {
+    const points = store.state.user.userInfo.roles.points
+    // 判断是否有 导出标识 "exprot_excel" 有的话就可以使用导出功能 如果没有就不能导出
+    if (!points.includes(binding.value)) {
+      // 如果没有这个值就删除这个按钮
+      el.remove()
+    }
+  }
+})
+
 new Vue({
   el: '#app',
   router,

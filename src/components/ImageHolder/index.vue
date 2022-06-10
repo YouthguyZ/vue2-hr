@@ -4,8 +4,9 @@
     <!-- error插槽：设置如果出错，要显示的内容 -->
     <template #error>
       <!-- 静态资源就近维护：把head.jpg这张图放在这个组件的目录下 -->
-      <img v-if="Math.random()>0.5" src="./head.jpg" alt="">
-      <img v-else src="./bigUserHeader.png" alt="">
+      <!-- <img v-if="Math.random()>0.5" src="./head.jpg" alt="">
+      <img v-else src="./bigUserHeader.png" alt=""> -->
+      <img src="./bigUserHeader.png" alt="">
     </template>
   </el-image>
 </template>

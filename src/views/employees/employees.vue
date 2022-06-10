@@ -7,7 +7,7 @@
         </template>
         <template #right>
           <el-button type="warning" @click="$router.push('/employees/import')">导入Excel</el-button>
-          <el-button type="danger" @click="hExport">导出Excel</el-button>
+          <el-button v-allow="'export_excel'" type="danger" @click="hExport">导出Excel</el-button>
           <el-button type="primary" @click="showDialog=true">新增员工</el-button>
         </template>
       </page-tools>
@@ -23,8 +23,8 @@
               <ImageHolder :src="row.staffPhoto" />
             </template>
           </el-table-column>
-          <el-table-column label="手机号" prop="mobile" />
-          <el-table-column label="手机号" prop="mobile" />
+          <!-- <el-table-column label="手机号" prop="mobile" /> -->
+          <el-table-column label="工号" prop="workNumber" />
           <el-table-column label="聘用形式">
             <template v-slot="{row}">
               {{ formatEmployees(row.formOfEmployment) }}
@@ -196,7 +196,7 @@ export default {
       }
       // 发请求获取所有数据
       const res = await getEmployees({ page: 1, size: this.total })
-      console.log(res)
+      // console.log(res)
       const list = res.data.rows
       // 遍历 list 找到每个元素, 将其属性名转为中文
       // const zhList = list.map(enObj => {
@@ -237,7 +237,7 @@ export default {
     hAssign(id) {
       // 打开时就获取当前id传给子组件id
       this.curId = id
-      console.log(id)
+      // console.log(id)
       this.showDialogRole = true
       // this.$nextTick
       // 直接找到子组件，调用方法去获取最新的数据

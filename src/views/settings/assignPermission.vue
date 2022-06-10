@@ -2,6 +2,7 @@
   <div>
     <!-- check-strictly :严格模式
           default-expand-all:全部展开
+          如果需要通过 key 来获取或设置，则必须设置node-key。
      -->
     <el-tree
       ref="tree"
@@ -49,9 +50,10 @@ export default {
     },
     async hSubmit() {
       try {
+        // 如果需要通过 key 来获取或设置，则必须设置node-key。
         // 勾选项的 id
-        const lds = this.$refs.tree.getCheckedNodes()
-        console.log(lds)
+        const lds = this.$refs.tree.getCheckedKeys()
+        // console.log(lds, this.id)
         const res = await assignPermission({ id: this.id, permIds: lds })
         this.$message.success(res.message)
         // 关闭dialog
@@ -64,8 +66,9 @@ export default {
       try {
         // 获取角色列表 拿到 premIds
         const res = await getRolesDetail(this.id)
-        console.log(res)
-        this.$refs.tree.setCheckedNodes(res.data.permIds)
+        // console.log(res)
+        // 默认选中
+        this.$refs.tree.setCheckedKeys(res.data.permIds)
       } catch (e) {
         console.log(e)
       }

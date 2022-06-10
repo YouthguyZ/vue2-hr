@@ -34,7 +34,7 @@ export default {
   actions: {
     async userLogin(context, loginFrom) {
       const res = await login(loginFrom)
-      console.log(res)
+      // console.log(res)
       context.commit('updateToken', res.data)
       return res
     },

@@ -109,12 +109,12 @@ export default {
       rules: {
         name: [
           { required: true, message: '不能为空', trigger: 'blur' },
-          { min: 2, max: 10, message: '请输入2-10位的字符', trigger: 'blur' },
+          { min: 2, max: 15, message: '请输入2-15位的字符', trigger: 'blur' },
           { validator: nameValida, trigger: 'blur' }
         ],
         code: [
           { required: true, message: '不能为空', trigger: 'blur' },
-          { min: 2, max: 10, message: '请输入2-10位的字符', trigger: 'blur' },
+          { min: 2, max: 15, message: '请输入2-15位的字符', trigger: 'blur' },
           { validator: codeValida, trigger: 'blur' }
         ],
         description: [
@@ -133,7 +133,7 @@ export default {
   methods: {
     async loadPermission() {
       const res = await getPermissionList()
-      console.log(res)
+      // console.log(res)
       // 筛选所需数据
       this.originList = res.data.map(item => {
         return { id: item.id, code: item.code, name: item.name, pid: item.pid }
