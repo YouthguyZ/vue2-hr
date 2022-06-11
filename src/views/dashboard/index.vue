@@ -23,6 +23,7 @@
         <el-card class="box-card">
           <div slot="header" class="header">
             <span>工作日历</span>
+            <calender />
           </div>
           <!-- 放置日历组件 -->
         </el-card>
@@ -93,6 +94,7 @@
             <span>绩效指数</span>
           </div>
           <!-- 放置雷达图 -->
+          <radar />
         </el-card>
         <!-- 帮助连接 -->
         <el-card class="box-card">
@@ -126,6 +128,16 @@
     </el-row>
   </div>
 </template>
+<script>
+import calender from '@/views/dashboard/calender'
+import radar from '@/views/dashboard/radar'
+export default {
+  components: {
+    calender,
+    radar
+  }
+}
+</script>
 
 <style lang="scss" scoped>
 .dashboard-container {
