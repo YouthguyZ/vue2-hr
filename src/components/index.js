@@ -6,6 +6,7 @@ import UploadExcel from '@/components/UploadExcel'
 import UploadImg from '@/components/UploadImg'
 // 全局注册 头像图片
 import ImageHolder from '@/components/ImageHolder'
+import Lang from '@/components/Lang'
 
 // 1. Vue.use 可以接收一个对象，Vue.use(obj)
 // 2. 对象obj中需要提供一个 **install** 函数
@@ -20,6 +21,8 @@ export default {
     Vue.component(UploadImg.name, UploadImg)
     // 全局头像
     Vue.component(ImageHolder.name, ImageHolder)
+    // 全局语言包组件
+    Vue.component(Lang.name, Lang)
   }
 }
 
