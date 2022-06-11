@@ -14,6 +14,32 @@ const name = defaultSettings.title || 'vue Admin Template' // page title
 // You can change the port by the following methods:
 // port = 9528 npm run dev OR npm run dev --port = 9528
 const port = process.env.port || process.env.npm_config_port || 9528 // dev port
+// webpack配置排除打包-引用网络资源
+let externals = {}
+let cdn = { css: [], js: [] }
+const isProduction = process.env.NODE_ENV === 'production' // 判断是否是生产环境
+if (isProduction) {
+  externals = {
+    /**
+      * externals 对象属性解析：
+      * '包名' : '在项目中引入的名字'
+    */
+    'vue': 'Vue',
+    'element-ui': 'ELEMENT',
+    'xlsx': 'XLSX'
+  }
+  cdn = {
+    css: [
+      'https://unpkg.com/element-ui/lib/theme-chalk/index.css' // element-ui css 样式表
+    ],
+    js: [
+      // vue must at first!
+      'https://cdn.bootcdn.net/ajax/libs/vue/2.6.10/vue.min.js', // vuejs
+      'https://unpkg.com/element-ui/lib/index.js', // element-ui js
+      'https://cdn.bootcdn.net/ajax/libs/xlsx/0.14.1/xlsx.min.js' // xlsx
+    ]
+  }
+}
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
@@ -54,13 +80,31 @@ module.exports = {
     // provide the app's title in webpack's name field, so that
     // it can be accessed in index.html to inject the correct title.
     name: name,
+    externals: externals,
     resolve: {
       alias: {
         '@': resolve('src')
       }
     }
+    // externals: {
+    //   /**
+    //    * externals 对象属性解析。
+    //    *  基本格式：
+    //    *     '包名' : '在项目中引入的名字'
+    //    *
+    //  */
+    //   'vue': 'Vue',
+    //   'element-ui': 'ElementUI',
+    //   'xlsx': 'XLSX'
+    // }
+
   },
   chainWebpack(config) {
+    // 打包优化-去掉console-log
+    config.optimization.minimizer('terser').tap((args) => {
+      args[0].terserOptions.compress.drop_console = true
+      return args
+    })
     // it can improve the speed of the first screen, it is recommended to turn on preload
     config.plugin('preload').tap(() => [
       {
@@ -131,5 +175,10 @@ module.exports = {
           config.optimization.runtimeChunk('single')
         }
       )
+      // 注入cdn变量 (打包时会执行)
+    config.plugin('html').tap(args => {
+      args[0].cdn = cdn // 配置cdn给插件
+      return args
+    })
   }
 }
