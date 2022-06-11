@@ -11,6 +11,8 @@ import '@/styles/index.scss' // global css
 import App from './App'
 import store from './store'
 import router from './router'
+// 导入国际化语言包
+import i18n from '@/lang'
 
 // // 引入工具组件
 // import PageTools from '@/components/PageTools'
@@ -72,5 +74,6 @@ new Vue({
   el: '#app',
   router,
   store,
+  i18n,
   render: h => h(App)
 })

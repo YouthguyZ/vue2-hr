@@ -6,6 +6,7 @@
         <div class="fl headL">
           <div class="headImg">
             <img src="@/assets/common/head.jpg">
+            <!-- <ImageHolder :src="staffPhoto" /> -->
           </div>
           <div class="headInfoTip">
             <p class="firstChild">早安，{{ $store.getters.username }}，祝你开心每一天！</p>
