@@ -9,9 +9,10 @@
     </div>
 
     <div class="right-menu">
-      <Lang style="margin-right:10px" />
+      <ScreenFull class="right-menu-item" />
+      <Lang class="right-menu-item" />
       <el-dropdown class="avatar-container" trigger="click">
-        <div class="avatar-wrapper">
+        <div class="avatar-wrapper right-menu-item">
           <!-- <img src="staffPhoto" class="user-avatar"> -->
           <!-- 子组件 -->
           <ImageHolder :src="staffPhoto" class="user-avatar" />
@@ -97,6 +98,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.right-menu-item {
+   vertical-align: middle;
+}
 .navbar {
   height: 50px;
   overflow: hidden;
@@ -176,6 +180,7 @@ export default {
           cursor: pointer;
           width: 30px;
           height: 30px;
+          margin-right: 10px;
           border-radius: 15px;
           vertical-align: middle;
         }
