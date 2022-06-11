@@ -44,6 +44,7 @@ module.exports = {
         // 目标挂到别人ip地址 target: 'http://192.168.72.110:3000'
         // 目标挂在自家的本地服务器
         target: 'http://localhost:3000' // 我们要代理的真实接口地址
+        // target: 'http://192.168.72.25:3000' // 我们要代理的真实接口地址
       }
     }
     // before: require('./mock/mock-server.js')
